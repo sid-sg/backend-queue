@@ -3,14 +3,50 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const MONGO_URL = process.env.MONGO_URL || '';
-let isConnected = false;
 
-export const connectDB = async () => {
-  if (!isConnected) {
-    await mongoose.connect(MONGO_URL);
-    isConnected = true;
-    console.log('Database connected successfully');
+const connectDB = async () => {
+  try {
+    await mongoose.connect(MONGO_URL, {
+      serverSelectionTimeoutMS: 30000, 
+    });
+    console.log('Connected to MongoDB successfully');
+  } catch (error) {
+    console.error('MongoDB connection error:', error);
+    process.exit(1);
   }
-  return mongoose;
 };
+
+
+const userSchema = new mongoose.Schema({
+    email: {
+        type: String,
+        required: true,
+        unique: true,
+        lowercase: true,
+        maxLength: 254
+    },
+    firstName: {
+        type: String,
+        required: true,
+        trim: true,
+    },
+    lastName: {
+        type: String,
+        required: true,
+        trim: true,
+    },
+    hashedPassword: {
+        type: String,
+        required: true
+    }
+});
+
+
+const Users = mongoose.model('Users', userSchema);
+
+export {
+    Users,
+    connectDB
+}
+
 
