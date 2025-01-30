@@ -103,5 +103,9 @@ router.post('/login', loginMiddleware, loginUserExist, async (req: Authenticated
   return
 });
 
+router.get('/test', (req: Request, res: Response) => {
+  res.json({ message: 'User route works' });
+});
+
 
 export default router;
